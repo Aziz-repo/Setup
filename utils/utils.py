@@ -32,10 +32,23 @@ def build_hiarchy(path: str, dirs: list, makefile: str, verbose:bool)-> int:
             return 1
     return 0
 
-def write_to_makefile():
+def write_to_makefile(lang_code: int) -> int:
+    if lang_code == 0:
+        lang = "c"
+    else:
+        lang = "cpp"
+    c = ["CC=\n",
+        "CFLAGS=\n",
+        "SRC=src\n",
+        "OBJ=obj\n",
+        f"SRCS=$(wildcard $(SRC)/*.{lang}",
+        f"OBJS=$(patsubt $(SRC)/%*.{lang}, $(OBJ)/%.o, $(SRCS))",
+        "BIN=bin/"
+        "BINDIR=bin"
+    ]
     os.chdir(os.path.join(os.getcwd(), "src"))
     # try to write to the makefile
-    pass
+    
 
 
 def create_main(lang: int) -> int:

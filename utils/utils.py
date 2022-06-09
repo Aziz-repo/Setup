@@ -32,7 +32,7 @@ def build_hiarchy(path: str, dirs: list, makefile: str, verbose:bool)-> int:
             return 1
     return 0
 
-def write_to_makefile(lang_code: int) -> int:
+def write_to_makefile(lang_code: int, compiler: str) -> int:
     if lang_code == 0:
         lang = "c"
     else:

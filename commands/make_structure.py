@@ -1,3 +1,4 @@
+from typing import Optional
 import typer
 import os
 from utils.utils import build_hiarchy
@@ -6,7 +7,7 @@ app = typer.Typer()
 
 # TODO: write the docs for every componenent in the app
 @app.command("create")
-def make_struct(name: str=typer.Option("--name","-n", help="Project name"), verbose: bool=False) -> int:
+def make_struct(name: str = typer.Option("project","--name", "-n"), verbose: bool=typer.Option(False, "--verbose", "-v")) -> int:
     dir = os.getcwd()
     subdirs_to_create = ["src", "bin", "obj"]
     file_to_create = "Makefile"
@@ -19,6 +20,4 @@ def make_struct(name: str=typer.Option("--name","-n", help="Project name"), verb
 
 
 
-if __name__ == "__main__":
-    app()
 

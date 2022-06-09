@@ -1,14 +1,14 @@
 import typer
 
-import make_structure
-import lang_choise
-
+import commands
 
 app = typer.Typer()
 
-app.add_typer(make_structure.app, name="create")
-app.add_typer(lang_choise.app, name="lang")
+app.add_typer(commands.make_structure.app, name="create", help="Create the project structure")
+app.add_typer(commands.lang_choise.app, name="lang", help="Pick C or Cpp language")
+
+# TODO: add a callback to the CLI indicate what's going on!!!
 
 
-if __name__=="__main__":
+if __name__== "__main__":
     app()

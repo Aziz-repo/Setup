@@ -8,6 +8,8 @@ create_command = typer.Typer()
 # TODO: write the docs for every componenent in the app
 @create_command.command("project")
 def make_struct(name: str = typer.Option("project","--name", "-n"), verbose: bool=typer.Option(False, "--verbose", "-v")) -> int:
+    global global_name
+    global_name = name
     dir = os.getcwd()
     subdirs_to_create = ["src", "bin", "obj"]
     file_to_create = "Makefile"

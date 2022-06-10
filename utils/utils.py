@@ -32,12 +32,13 @@ def build_hiarchy(path: str, dirs: list, makefile: str, verbose:bool)-> int:
             return 1
     return 0
 
-def write_to_makefile(lang_code: int, compiler: str) -> int:
+def write_to_makefile(lang_code: int) -> int:
     if lang_code == 0:
-        lang = "c"
+        lang = 'c'
     else:
-        lang = "cpp"
-    c = ["CC=\n",
+        lang = 'cpp'
+    
+    instructions = ["CC=\n",
         "CFLAGS=\n",
         "SRC=src\n",
         "OBJ=obj\n",
@@ -46,8 +47,16 @@ def write_to_makefile(lang_code: int, compiler: str) -> int:
         "BIN=bin/"
         "BINDIR=bin"
     ]
-    os.chdir(os.path.join(os.getcwd(), "src"))
+    
     # try to write to the makefile
+    try:
+        with open("Makefile", "w") as fw:
+            for instruction in instructions :
+                fw.write(instruction)
+    except :
+        print("An error has occured! Please try again")
+        return 1
+    return 0
     
 
 

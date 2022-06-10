@@ -1,2 +1,2 @@
-from .make_structure import make_struct
-from .lang_choise import language_choise
+from .make_structure import create_command
+from .lang_choise import lang_command

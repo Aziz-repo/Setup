@@ -3,10 +3,10 @@ import typer
 import os
 from utils.utils import build_hiarchy
 
-app = typer.Typer()
+create_command = typer.Typer()
 
 # TODO: write the docs for every componenent in the app
-@app.command("create")
+@create_command.command("project")
 def make_struct(name: str = typer.Option("project","--name", "-n"), verbose: bool=typer.Option(False, "--verbose", "-v")) -> int:
     dir = os.getcwd()
     subdirs_to_create = ["src", "bin", "obj"]
@@ -17,6 +17,9 @@ def make_struct(name: str = typer.Option("project","--name", "-n"), verbose: boo
         return 0
     typer.echo("exit code 1")
     return 1
+
+if __name__ == "__main__":
+    create_command()
 
 
 

@@ -1,16 +1,19 @@
 from typing import Set
 import typer
+import click
 from enums.cflags import Cflags
 from utils.utils import create_main, write_to_makefile
 from enums.prog_lang import ProgLang
 from enums.compiler import Compiler
 
 
-app = typer.Typer()
+lang_command = typer.Typer()
 
 
-@app.command("lang")
-def language_choise(lang: ProgLang = ProgLang.c.value, compiler: Compiler=typer.Option(...,"--compiler", "-c"), cflags:Set[Cflags, Cflags]=["-g", "-Wall"]):
+@lang_command.command("lang")
+@click.option("--lang", "-l", help="development language")
+@click.option("--compiler", "-c", help="compiler to be used")
+def language_choise(lang: ProgLang = ProgLang.c.value, compiler: Compiler=typer.Option(...,"--compiler", "-c")):
     # TODO: verify if the project is created
 
     if lang.value == "c":
@@ -31,3 +34,5 @@ def language_choise(lang: ProgLang = ProgLang.c.value, compiler: Compiler=typer.
         # Write in the makefile
         write_to_makefile(lang_code, compiler.value)
         
+if __name__ == "__main__":
+    lang_command()

@@ -5,7 +5,6 @@ from make_structure import global_name # importing the name of the project as a 
 from enums.cflags import Cflags
 from utils.utils import create_main, write_to_makefile
 from enums.prog_lang import ProgLang
-from enums.compiler import Compiler
 
 
 lang_command = typer.Typer()
@@ -36,7 +35,7 @@ def language_choise(lang: ProgLang =typer.Option(ProgLang.c.value, "--lang", "-l
             print("exit code 2")
             return 2
         # Write in the makefile
-        if write_to_makefile(lang_code, compiler.value) != 0:
+        if write_to_makefile(lang_code) != 0:
             return 2
     return 0
 

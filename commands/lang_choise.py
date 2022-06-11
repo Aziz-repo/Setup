@@ -3,10 +3,11 @@ import typer
 import os
 from commands import make_structure
 from enums.cflags import Cflags
-from utils.utils import add_source_file, create_main, write_to_makefile, makefile_debug
+from utils.utils import add_source_file, create_main, makefile_rules, write_to_makefile, makefile_debug
 from enums.prog_lang import ProgLang
 from enums.cflags import Cflags
 from enums.compiler import Compiler
+from enums.make_rules import MakeRules
 
 
 lang_command = typer.Typer()
@@ -14,14 +15,17 @@ lang_command = typer.Typer()
 # FIXME fix the glabal variable project_name
 
 @lang_command.command("set")
-def language_choise(lang: ProgLang =typer.Option(ProgLang.c.value, "--lang", "-l", help="development language used"),
-                    source_file :Optional[Tuple[str,str,str]] = typer.Option(Tuple[None], "--source", "-s", help="add source file. Maximum 3"),
-                    verbose:bool=typer.Option(False, "--verbose","-v")) -> int:
+def language_choise(lang: ProgLang = typer.Option(ProgLang.c.value, "--lang", "-l", help="development language used"),
+                    source_file :Optional[Tuple[MakeRules, MakeRules, MakeRules]] = typer.Option(Tuple[None], "--source", "-s", help="add source file. Maximum 3"),
+                    make_rules: Optional[Tuple[str,str,str]] = typer.Option(Tuple[None], "--rules", "-r", help="additionnal make rules. Maximum 3"),
+                    verbose:bool= typer.Option(False, "--verbose","-v")) -> int:
 
     if make_structure.make_struct.project_name not in os.listdir(): # clause guard
-        typer.echo("Project isn't created!! Please create project first!!")
+        typer.echo("Project isn't created!! Please create the enviorment first!!")
         return 2
     # TODO: change the hole structure to one function
+
+    # if the language is set to C
     if lang.value == "c":
         # Create the main file in /src directory and write to it
         lang_code = 0
@@ -30,8 +34,10 @@ def language_choise(lang: ProgLang =typer.Option(ProgLang.c.value, "--lang", "-l
             return 2
         if verbose:
             typer.echo("main file is created!!")
+        
         # Changing to the project directory
         os.chdir(make_structure.make_struct.project_name)
+
         if "Makefile"  not in os.listdir():
             typer.echo("Makefile is not created!! Please retry or try to create it manually!!")
             return 2
@@ -40,17 +46,28 @@ def language_choise(lang: ProgLang =typer.Option(ProgLang.c.value, "--lang", "-l
             return 2
         if verbose:
             typer.echo(f"Makefile is created under /{make_structure.make_struct.project_name}")
+        
         if source_file != Tuple[None]:
             if add_source_file(make_structure.make_struct.project_name, source_file, lang_code) != 0 :
                 typer.echo("Error: Couldn't create source files!")
                 return 2
             if verbose:
                 typer.echo("Source files is created")
+        
+        if make_rules != Tuple[None]:
+            if makefile_rules(make_rules) != 0:
+                typer.echo("Error: rules cannot be added")
+                return 2
+            if verbose:
+                typer.echo("Rules has been added")
+        
+    
+    # if languafe is set to Cpp
     else:
         # Create the main file in /src directory and write to it
         lang_code = 1
         if create_main(lang_code) != 0:
-            print("exit code 2")
+            print("Error: couldn't create main file")
             return 2
         if verbose:
             typer.echo(f"main file is created under /{make_structure.make_struct.project_name}/src")
@@ -69,6 +86,13 @@ def language_choise(lang: ProgLang =typer.Option(ProgLang.c.value, "--lang", "-l
                 return 2
             if verbose:
                 typer.echo("Source files is created")
+        
+        if make_rules != Tuple[None]:
+            if makefile_rules(make_rules) != 0 :
+                typer.echo("Rules has been added")
+                return 2
+            if verbose:
+                typer.echo("Rules has been created")
     return 0
 
 @lang_command.command("debug")

@@ -2,6 +2,7 @@ from typing import Tuple
 import os
 from enums.cflags import Cflags
 from enums.compiler import Compiler
+from enums.make_rules import MakeRules
 
 
 def build_hiarchy(path: str, dirs: list, makefile: str, verbose:bool)-> int:
@@ -47,8 +48,9 @@ def write_to_makefile(lang_code: int) -> int:
         "OBJ=obj\n",
         f"SRCS=$(wildcard $(SRC)/*.{lang}\n",
         f"OBJS=$(patsubt $(SRC)/%*.{lang}, $(OBJ)/%.o, $(SRCS))\n",
-        "BIN=bin/\n"
-        "BINDIR=bin\n"
+        "BIN=bin/\n",
+        "BINDIR=bin\n",
+        "SUBMITNAME="
     ]
     
     # try to write to the makefile
@@ -150,6 +152,29 @@ def add_source_file(path: str, source_file: Tuple[str,str,str], lang_code: int) 
             return 1
         else:
             return 0
+
+def makefile_rules(make_rules: Tuple[MakeRules, MakeRules, MakeRules]) -> int:
+    
+    # defining the supported rules by the app
+    rules = {"all": ["all :\n","\t$(BIN)"],
+            "build": ["$(OBJ)/%.o : $(SRC)/%.c\n", "\t$(CC) $(CFLAGS) -o $@ -c $<"],
+            "compile": ["$(BIN) : $(OBJS)\n", "\t$(CC) $(CFLAGS) $(OBJS) -o $(BIN)"],
+            "clean": ["clean : \n", "$\t$(RM) -rf $(OBJ)/* $(BINDIR)/*"],
+            "submit": ["submit :\n", "\t$(RM) $(SUBMITNAME)\n", "\tzip $(SUBMITNAME) $(BIN)"],
+            "release": ["release: CFLAGS=Wall -O2 -DNDEBUG\n", "release : clean\n", "release : $(BIN)"]}
+    
+    # write the rules to the makefiles
+    try:
+        with open("Makefile", "a") as f:
+            for key in rules.keys():
+                if key in make_rules:
+                    for value in rules.values():
+                        f.write(value)
+                else:
+                    continue
+    except:
+        return 1
+    return 0
 
               
             
